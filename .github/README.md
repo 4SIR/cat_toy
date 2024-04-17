@@ -25,7 +25,7 @@ pip install -r requirements.txt
 Para rodar o projeto, você precisa rodar o arquivo `main.py`.
 
 ```bash
-python3 src/main.py
+python3 src/__main__.py
 ```
 
 ## Definição de Pronto
