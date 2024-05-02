@@ -30,9 +30,11 @@ python3 src/__main__.py
 
 ## Definição de Pronto
 
-- [ ] Identificar um gato na camera (1,0)
-- [ ] Identificar a posição do gato na camera (2,5)
-- [ ] Determinar o vetor de movimento do gato (2,5)
+- [x] Identificar um gato na camera (1,0)
+- [x] Identificar a posição do gato na camera (2,5)
+- [ ] Determinar o vetor de movimento do gato (1,5)
+- [x] Usar algoritmo de tracking para determinar o movimento(1,0)
 - [ ] Determinar para onde mover o laser para que o gato se mova (2,0)
-- [ ] Implementar o código num raspberry pi e fazer o hardware (2,0)
+- [ ] Implementar o código num raspberry pi e fazer o hardware (makerlab)(2,0)
 
+**Nota Atual**: 5,5
