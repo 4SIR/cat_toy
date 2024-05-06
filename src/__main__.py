@@ -10,6 +10,9 @@ cap = cv2.VideoCapture("data/4.mp4")
 tracker = cv2.TrackerKCF_create()
 tracking = False
 
+prev_centers = []
+frame_count = 20
+
 while True:
     ret, frame = cap.read()
 
@@ -44,6 +47,14 @@ while True:
 
                 tracking = True
                 tracker.init(frame, bbox)
+                x, y, w, h = [int(i) for i in bbox]
+                current_center = (x + (w/2), y + (h/2))
+                cv2.circle(frame, (int(current_center[0]), int(current_center[1])), 5, (0, 0, 255), -1)
+
+                prev_centers.append(current_center)
+            
+                if len(prev_centers) > frame_count:
+                    prev_centers = prev_centers[-frame_count:]
                 print("Tracking started")
 
     else:
@@ -51,6 +62,21 @@ while True:
         if success:
             x, y, w, h = [int(i) for i in bbox]
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            current_center = (x + (w/2), y + (h/2))
+            cv2.circle(frame, (int(current_center[0]), int(current_center[1])), 5, (0, 0, 255), -1)
+
+            prev_centers.append(current_center)
+        
+            if len(prev_centers) > frame_count:
+               prev_centers = prev_centers[-frame_count:]
+        
+            if len(prev_centers) == frame_count:
+                prev_center = prev_centers[0]            
+                movement_vector = (current_center[0] - prev_center[0], current_center[1] - prev_center[1])
+                next_position = (current_center[0] + movement_vector[0], current_center[1] + movement_vector[1])
+
+                cv2.circle(frame, (int(next_position[0]), int(next_position[1])), 5, (0, 0, 255), -1)
+                cv2.line(frame, (int(current_center[0]), int(current_center[1])), (int(next_position[0]), int(next_position[1])), (0, 255, 255), 2)
         else:
             tracking = False
             tracker = cv2.TrackerKCF_create()
