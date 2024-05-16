@@ -6,12 +6,12 @@ CAFFE_MODEL = "model/MobileNetSSD_deploy.caffemodel"
 
 DNN = cv2.dnn.readNetFromCaffe(PROTO_TXT, CAFFE_MODEL)
 
-cap = cv2.VideoCapture("data/4.mp4")
+cap = cv2.VideoCapture("data/3.mp4")
 tracker = cv2.TrackerKCF_create()
 tracking = False
 
 prev_centers = []
-frame_count = 20
+frame_count = 4
 
 while True:
     ret, frame = cap.read()
@@ -51,10 +51,37 @@ while True:
                 current_center = (x + (w/2), y + (h/2))
                 cv2.circle(frame, (int(current_center[0]), int(current_center[1])), 5, (0, 0, 255), -1)
 
+                cat_left_edge = x
+                cat_right_edge = x + w
+
+                height, width, _ = frame.shape
+
+                right_edge = width-1
+                left_edge = 0
+
                 prev_centers.append(current_center)
             
                 if len(prev_centers) > frame_count:
                     prev_centers = prev_centers[-frame_count:]
+
+                if len(prev_centers) == frame_count:
+                    prev_center = prev_centers[0]            
+                    movement_vector = (current_center[0] - prev_center[0], current_center[1] - prev_center[1])
+                    next_position = (current_center[0] + movement_vector[0], current_center[1] + movement_vector[1])
+
+                    if next_position[0] > current_center[0]:
+                        laser_offset_x = 2
+
+                        laser_x = cat_right_edge + (laser_offset_x * movement_vector[0]) + 50
+                        laser_y = cat_bottom_edge + movement_vector[1]
+                        cv2.circle(frame, (int(laser_x), int(laser_y)), 5, (255, 255, 255), -1)
+                    else: 
+                        laser_offset_x = -2
+
+                        laser_x = cat_left_edge - (laser_offset_x * movement_vector[0]) - 50
+                        laser_y = cat_bottom_edge + movement_vector[1]
+                        cv2.circle(frame, (int(laser_x), int(laser_y)), 5, (255, 255, 255), -1)
+                        
                 print("Tracking started")
 
     else:
@@ -65,6 +92,15 @@ while True:
             current_center = (x + (w/2), y + (h/2))
             cv2.circle(frame, (int(current_center[0]), int(current_center[1])), 5, (0, 0, 255), -1)
 
+            cat_left_edge = x
+            cat_right_edge = x + w
+            cat_bottom_edge = y + h
+
+            height, width, _ = frame.shape
+
+            right_edge = width-1
+            left_edge = 0
+
             prev_centers.append(current_center)
         
             if len(prev_centers) > frame_count:
@@ -74,6 +110,19 @@ while True:
                 prev_center = prev_centers[0]            
                 movement_vector = (current_center[0] - prev_center[0], current_center[1] - prev_center[1])
                 next_position = (current_center[0] + movement_vector[0], current_center[1] + movement_vector[1])
+
+                if next_position[0] > current_center[0]:
+                    laser_offset_x = 2
+
+                    laser_x = cat_right_edge + (laser_offset_x * movement_vector[0]) + 50
+                    laser_y = cat_bottom_edge + movement_vector[1]
+                    cv2.circle(frame, (int(laser_x), int(laser_y)), 5, (255, 255, 255), -1)
+                else: 
+                    laser_offset_x = -2
+
+                    laser_x = cat_left_edge - (laser_offset_x * movement_vector[0]) - 50
+                    laser_y = cat_bottom_edge + movement_vector[1]
+                    cv2.circle(frame, (int(laser_x), int(laser_y)), 5, (255, 255, 255), -1)
 
                 cv2.circle(frame, (int(next_position[0]), int(next_position[1])), 5, (0, 0, 255), -1)
                 cv2.line(frame, (int(current_center[0]), int(current_center[1])), (int(next_position[0]), int(next_position[1])), (0, 255, 255), 2)
