@@ -112,12 +112,22 @@ while True:
                 next_position = (current_center[0] + movement_vector[0], current_center[1] + movement_vector[1])
 
                 if next_position[0] > current_center[0]:
+                    if (cat_right_edge + 75) > right_edge:
+                        laser_x = cat_left_edge - (laser_offset_x * movement_vector[0]) - 50
+                        laser_y = cat_bottom_edge + movement_vector[1]
+                        cv2.circle(frame, (int(laser_x), int(laser_y)), 5, (255, 255, 255), -1)
+
                     laser_offset_x = 2
 
                     laser_x = cat_right_edge + (laser_offset_x * movement_vector[0]) + 50
                     laser_y = cat_bottom_edge + movement_vector[1]
                     cv2.circle(frame, (int(laser_x), int(laser_y)), 5, (255, 255, 255), -1)
-                else: 
+                else:
+                    if (cat_left_edge - 75) < left_edge:
+                        laser_x = cat_right_edge + (laser_offset_x * movement_vector[0]) + 50
+                        laser_y = cat_bottom_edge + movement_vector[1]
+                        cv2.circle(frame, (int(laser_x), int(laser_y)), 5, (255, 255, 255), -1)
+
                     laser_offset_x = -2
 
                     laser_x = cat_left_edge - (laser_offset_x * movement_vector[0]) - 50
